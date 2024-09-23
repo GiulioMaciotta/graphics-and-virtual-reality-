@@ -1,0 +1,33 @@
+import cv2
+import numpy as np
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import io
+
+uploaded = files.upload()
+
+image = cv2.imdecode(np.frombuffer(uploaded[next(iter(uploaded))], np.uint8), cv2.IMREAD_COLOR)
+
+
+def segment_color(image, lower_bound, upper_bound):
+
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    mask = cv2.inRange(hsv, lower_bound, upper_bound)
+    
+    result = cv2.bitwise_and(image, image, mask=mask)
+    
+    return result
+
+lower_red1 = np.array([0, 120, 70])    
+upper_red1 = np.array([10, 255, 255])  
+
+
+mask1 = segment_color(image, lower_red1, upper_red1)
+mask2 = segment_color(image, lower_red2, upper_red2)
+
+
+segmented_image = cv2.bitwise_or(mask1, mask2)
+
+cv2_imshow(image)             
+cv2_imshow(segmented_image)    
